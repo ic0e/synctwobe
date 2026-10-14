@@ -50,7 +50,7 @@ export function Playlist({
       });
     }
   }, [showPlaylist]);
-
+  
   const handleAddVideo = () => {
     const url = urlInput.trim();
     if (!url) return;
@@ -59,12 +59,13 @@ export function Playlist({
     setPreviewUrl("");
   };
 
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  
   const handlePlaySelection = (index: number) => {
-    if (playlistIndex !== index) {
-      // Remove current playing video
-      onRemoveFromPlaylist(playlistIndex);
-    }
+    if (index === playlistIndex) return;
+
     onPlayFromPlaylist(index);
+    onRemoveFromPlaylist(playlistIndex);
   };
 
   const previewVideoId = extractVideoId(previewUrl);
@@ -162,7 +163,10 @@ export function Playlist({
                 return (
                   <div
                     key={index}
-                    onClick={() => handlePlaySelection(index)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlaySelection(index);
+                    }}
                     className={`relative flex gap-3 p-2 rounded-md hover:bg-zinc-800/60 transition-colors group cursor-pointer ${
                       isActive ? "bg-zinc-800/80" : ""
                     }`}

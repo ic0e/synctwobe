@@ -319,25 +319,29 @@ export default function App() {
   };
 
   const removeFromPlaylist = (index: number) => {
-    let newPlaylist = playlist.filter((_, i) => i !== index);
-    let newIndex = playlistIndex;
-
-    if (index < playlistIndex) {
-      newIndex = playlistIndex - 1;
-    } else if (index === playlistIndex) {
-      if (newPlaylist.length > 0) {
-        newIndex = Math.min(playlistIndex, newPlaylist.length - 1);
-        setVideoUrl(newPlaylist[newIndex]);
-      } else {
-        newPlaylist = [];
-        newIndex = 0;
-        setVideoUrl(null);
-      }
-    }
-
+    const newPlaylist = playlist.filter((_, i) => i !== index);
     setPlaylist(newPlaylist);
-    setPlaylistIndex(newIndex);
-    wsSend({ action: "playlist", urls: newPlaylist, index: newIndex });
+  
+    setPlaylistIndex((prevIndex) => {
+      let newIndex = prevIndex;
+  
+      if (index < prevIndex) {
+        newIndex = prevIndex - 1;
+      } else if (index > prevIndex) {
+        newIndex = prevIndex;
+      } else {
+        if (newPlaylist.length > 0) {
+          newIndex = Math.min(prevIndex, newPlaylist.length - 1);
+          setVideoUrl(newPlaylist[newIndex]);
+        } else {
+          newIndex = 0;
+          setVideoUrl(null);
+        }
+      }
+  
+      wsSend({ action: "playlist", urls: newPlaylist, index: newIndex });
+      return newIndex;
+    });
   };
 
   const playFromPlaylist = (index: number) => {
