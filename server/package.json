@@ -8,11 +8,11 @@
     "deploy": "run-s build zip update"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
-    "esbuild": "^0.28.1",
-    "npm-run-all2": "^9.0.2"
+    "@types/node": "^26.6.5",
+    "esbuild": "^0.28.2",
+    "npm-run-all2": "^9.0.3"
   },
   "dependencies": {
-    "hono": "^4.13.5"
+    "hono": "^4.13.13"
   }
 }
