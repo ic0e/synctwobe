@@ -4,6 +4,7 @@
     "skipLibCheck": false,
     "checkJs": false
   },
+  "include": ["src"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
