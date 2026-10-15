@@ -1,0 +1,14 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "dependencies": {
+        "video.js": "^10.1.0",
+      },
+    },
+  },
+  "packages": {
+    "video.js": ["video.js@10.1.0", "", {}, "sha512-UIj1tLsNtSEs+VuME++L7RfnOF0m3FGvpwZrMgH5TMNGzNIxvPYCWQmBq/+gy06vs3L+EM2BTUHX1h3aOI8/FA=="],
+  }
+}

@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "@tailwindcss/vite": "^4.3.3",
     "@videojs/react": "^10.1.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-player": "^3.4.0",
+    "react-router": "^8.4.0",
+    "react-router-dom": "^7.18.4",
     "tailwindcss": "^4.3.3",
     "video.js": "^8.24.2",
     "videojs-youtube": "^3.0.1"
