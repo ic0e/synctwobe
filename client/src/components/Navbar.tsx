@@ -100,7 +100,7 @@ export default function NavbarDefault() {
           to="/"
           className="mr-4 cursor-pointer py-1.5 font-medium text-base"
         >
-          Sync-Yt
+          Synctwobe
         </Link>
 
         <div className="hidden lg:block">
