@@ -174,6 +174,7 @@ export default function App() {
         const nextIndex = currentIndex + 1;
         setPlaylistIndex(nextIndex);
         setVideoUrl(currentPlaylist[nextIndex]);
+        removeFromPlaylist(currentIndex);
         wsSend({ action: "playlist", urls: currentPlaylist, index: nextIndex });
       }
     });
