@@ -58,8 +58,6 @@ export function Playlist({
     setUrlInput("");
     setPreviewUrl("");
   };
-
-  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
   
   const handlePlaySelection = (index: number) => {
     if (index === playlistIndex) return;
