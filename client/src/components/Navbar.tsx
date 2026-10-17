@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { supabase } from "../supabase";
+import { useAuth } from "../contexts/AuthContext";
 
 type NavItem = {
   label: string;
@@ -14,13 +16,6 @@ const navItems: NavItem[] = [
     to: "/home",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24"><path fill="#90A4AE" fill-rule="evenodd" d="M17.632 1.25h-5.764c-.743 0-1.346 0-1.835.04c-.505.041-.954.129-1.372.341a3.5 3.5 0 0 0-1.53 1.53c-.212.418-.3.867-.341 1.372c-.04.489-.04 1.092-.04 1.835v.382h-.382c-.743 0-1.346 0-1.835.04c-.505.041-.954.129-1.372.341a3.5 3.5 0 0 0-1.53 1.53c-.212.418-.3.867-.341 1.372c-.04.489-.04 1.092-.04 1.835v5.764c0 .743 0 1.346.04 1.835c.041.505.129.955.341 1.372a3.5 3.5 0 0 0 1.53 1.53c.418.212.867.3 1.372.341c.489.04 1.092.04 1.835.04h5.764c.743 0 1.346 0 1.835-.04c.505-.041.954-.129 1.372-.341a3.5 3.5 0 0 0 1.53-1.53c.212-.417.3-.867.341-1.372c.04-.489.04-1.092.04-1.835v-.382h.382c.743 0 1.346 0 1.835-.04c.505-.041.955-.129 1.372-.341a3.5 3.5 0 0 0 1.53-1.53c.212-.418.3-.867.341-1.372c.04-.489.04-1.092.04-1.835V6.368c0-.743 0-1.346-.04-1.835c-.041-.505-.129-.954-.341-1.372a3.5 3.5 0 0 0-1.53-1.53c-.417-.212-.867-.3-1.372-.341c-.489-.04-1.092-.04-1.835-.04m-1.882 16v.35c0 .782 0 1.324-.035 1.745c-.034.412-.096.642-.183.813a2 2 0 0 1-.874.874c-.17.087-.4.15-.813.183c-.42.034-.963.035-1.745.035H6.4c-.782 0-1.324 0-1.745-.035c-.412-.034-.642-.096-.813-.183a2 2 0 0 1-.874-.874c-.087-.17-.15-.4-.183-.813c-.034-.42-.035-.963-.035-1.745v-5.7c0-.782 0-1.324.035-1.745c.034-.412.096-.642.183-.813a2 2 0 0 1 .874-.874c.17-.087.4-.15.813-.183c.42-.034.963-.035 1.745-.035h.35v3.882c0 .743 0 1.346.04 1.835c.041.505.129.954.341 1.372a3.5 3.5 0 0 0 1.53 1.53c.418.212.867.3 1.372.341c.489.04 1.092.04 1.835.04zm-7.5-5.15c0 .782 0 1.324.035 1.745c.034.412.096.642.183.813a2 2 0 0 0 .874.874c.17.087.4.15.813.183c.42.034.963.035 1.745.035h5.7c.782 0 1.324 0 1.745-.035c.412-.034.642-.096.813-.183a2 2 0 0 0 .874-.874c.087-.17.15-.4.183-.813c.034-.42.035-.963.035-1.745V6.4c0-.782 0-1.324-.035-1.745c-.034-.412-.096-.642-.183-.813a2 2 0 0 0-.874-.874c-.17-.087-.4-.15-.813-.183c-.42-.034-.963-.035-1.745-.035h-5.7c-.782 0-1.324 0-1.745.035c-.412.034-.642.096-.813.183a2 2 0 0 0-.874.874c-.087.17-.15.4-.183.813c-.034.42-.035.963-.035 1.745z" clip-rule="evenodd"/></svg>
-    ),
-  },
-  {
-    label: "Account (wip)",
-    to: "/signup",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#90A4AE" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2m0 7c2.67 0 8 1.33 8 4v3H4v-3c0-2.67 5.33-4 8-4m0 1.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1"/></svg>
     ),
   },
   {
@@ -84,7 +79,8 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 
 export default function NavbarDefault() {
   const [openNav, setOpenNav] = useState(false);
-
+  const { session, loading } = useAuth()
+  
   useEffect(() => {
     const onResize = () => {
       if (window.innerWidth >= 960) setOpenNav(false);
@@ -107,39 +103,56 @@ export default function NavbarDefault() {
           <NavList />
         </div>
 
-        <div className="flex items-center gap-x-1">
-          <Link
-            to="/signin"
-            className="hidden lg:inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
-          >
-            Log In
-          </Link>
-          <Link
-            to="/signup"
-            className="hidden lg:inline-flex items-center rounded-md bg-zinc-100 px-3 py-1.5 text-sm font-semibold text-zinc-900 hover:bg-white transition-colors"
-          >
-            Sign Up
-          </Link>
-
-          <button
-            type="button"
-            aria-label="Toggle navigation"
-            aria-expanded={openNav}
-            onClick={() => setOpenNav((v) => !v)}
-            className="ml-auto h-6 w-6 text-zinc-200 hover:bg-transparent lg:hidden"
-          >
-            {openNav ? (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
+        {session ? (
+          <div className="flex items-center gap-x-1">
+            <Link
+              to="/profile"
+              className="hidden lg:inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#90A4AE" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2m0 7c2.67 0 8 1.33 8 4v3H4v-3c0-2.67 5.33-4 8-4m0 1.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1"/></svg>
+              Profile
+            </Link>
+            <button
+              onClick={() => supabase.auth.signOut()}
+              className="hidden lg:inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+            >
+              Sign out
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-x-1">
+            <Link
+              to="/signin"
+              className="hidden lg:inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+            >
+              Log In
+            </Link>
+            <Link
+              to="/signup"
+              className="hidden lg:inline-flex items-center rounded-md bg-zinc-100 px-3 py-1.5 text-sm font-semibold text-zinc-900 hover:bg-white transition-colors"
+            >
+              Sign Up
+            </Link>
+  
+            <button
+              type="button"
+              aria-label="Toggle navigation"
+              aria-expanded={openNav}
+              onClick={() => setOpenNav((v) => !v)}
+              className="ml-auto h-6 w-6 text-zinc-200 hover:bg-transparent lg:hidden"
+            >
+              {openNav ? (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
+        )}</div>
 
       <div
         className={`overflow-hidden transition-[max-height,opacity] duration-300 lg:hidden ${
