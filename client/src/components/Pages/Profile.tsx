@@ -1,52 +1,60 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { supabase } from '../../supabase'
 
 export default function Profile() {
   const { session, loading } = useAuth()
   const [displayName, setDisplayName] = useState('')
   const [savedName, setSavedName] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
+  const [savedAvatarUrl, setSavedAvatarUrl] = useState('')
+  const [isEditingPfp, setIsEditingPfp] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (!session) return
 
     async function fetchProfile() {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('display_name')
-            .eq('id', session?.user.id)
-            .single();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', session?.user.id)
+        .single();
+
+      if (data && !error) {
+        setDisplayName(data.display_name || '');
+        setSavedName(data.display_name || '');
+        setAvatarUrl(data.avatar_url || '');
+        setSavedAvatarUrl(data.avatar_url || '');
+      }
+    }
     
-          if (data && !error) {
-            setDisplayName(data.display_name || '');
-            setSavedName(data.display_name || '');
-          }
-        }
-        
-        fetchProfile()
-      }, [session])
+    fetchProfile()
+  }, [session])
   
   async function handleSave(e: FormEvent) {
-     e.preventDefault()
-     if (!session) return
-     setIsSaving(true)
- 
-     const { error } = await supabase
-       .from('profiles')
-       .upsert({ 
-         id: session.user.id, 
-         display_name: displayName 
-       })
- 
-     if (error) {
-       alert(error.message)
-     } else {
-       setSavedName(displayName)
-     }
-     setIsSaving(false)
-   }
+    e.preventDefault()
+    if (!session) return
+    setIsSaving(true)
+
+    const { error } = await supabase
+      .from('profiles')
+      .upsert({ 
+        id: session.user.id, 
+        display_name: displayName,
+        avatar_url: avatarUrl
+      })
+
+    if (error) {
+      alert(error.message)
+    } else {
+      setSavedName(displayName)
+      setSavedAvatarUrl(avatarUrl)
+      setIsEditingPfp(false)
+    }
+    setIsSaving(false)
+  }
 
   if (loading) return null
   if (!session) return <Navigate to="/signin" replace />
@@ -57,9 +65,26 @@ export default function Profile() {
     <div className="min-h-screen w-full flex items-center justify-center">
       <div className="w-full max-w-[340px] flex flex-col items-center p-8 border border-neutral-800 rounded-xl bg-neutral-950">
         
-        <div className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center text-2xl font-medium mb-4">
-          {initial}
+        <div 
+          onClick={() => setIsEditingPfp(!isEditingPfp)}
+          className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center text-2xl font-medium mb-4 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          {savedAvatarUrl ? (
+            <img src={savedAvatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            initial
+          )}
         </div>
+
+        {isEditingPfp && (
+          <input
+            type="url"
+            placeholder="Paste image URL"
+            value={avatarUrl}
+            onChange={(e) => setAvatarUrl(e.target.value)}
+            className="w-full bg-neutral-900 border border-neutral-800 rounded-[10px] px-3.5 py-3 text-sm outline-none focus:border-neutral-600 transition-colors mb-4"
+          />
+        )}
         
         <h1 className="text-[22px] font-medium tracking-tight mb-6">
           {savedName || 'No display name'}
@@ -75,7 +100,7 @@ export default function Profile() {
           />
           <button
             type="submit"
-            disabled={isSaving || displayName === savedName}
+            disabled={isSaving || (displayName === savedName && avatarUrl === savedAvatarUrl)}
             className="bg-white text-black rounded-[10px] py-2.5 text-sm font-medium hover:opacity-85 transition-opacity disabled:opacity-40"
           >
             {isSaving ? 'Saving...' : 'Save'}
