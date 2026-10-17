@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../supabase";
 
 export function Chat({ wsRef, roomId, chatMessages, setChatMessages }: any) {
   const [input, setInput] = useState("");
@@ -9,9 +11,32 @@ export function Chat({ wsRef, roomId, chatMessages, setChatMessages }: any) {
   const [showSettings, setShowSettings] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  const {session} = useAuth();
+  const [useTemp, setUseTemp] = useState(true);
+  const [dbProfile, setDbProfile] = useState<{ display_name: string, avatar_url: string } | null>(null)
+  const db_username = dbProfile?.display_name || session?.user?.email?.split('@')[0] || 'Anonymous'
+  const db_profilePictureUrl = dbProfile?.avatar_url || ''
+
   // placeholder default profile picture
   const defaultPfp = "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1280px-Default_pfp.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail";
-  
+
+  useEffect(() => {
+    if (!session) return;
+
+    async function getProfile() {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('display_name, avatar_url')
+            .eq('id', session?.user.id)
+            .single()
+    
+          if (data && !error) {
+            setDbProfile(data)
+          }
+        }
+        
+        getProfile()
+  }, [session])
 
   useEffect(() => {
     const saved = localStorage.getItem("syncyt_username");
@@ -54,17 +79,31 @@ export function Chat({ wsRef, roomId, chatMessages, setChatMessages }: any) {
       console.error('WebSocket not connected');
       return;
     }
-  
-    wsRef.current.send(
-      JSON.stringify({
-        action: "chat",
-        message: text,
-        username: username,
-        timestamp: Date.now(),
-        pfp: profilePictureUrl,
-      }),
-    );
-    setInput("");
+
+    if (useTemp == true) {
+      wsRef.current.send(
+        JSON.stringify({
+          action: "chat",
+          message: text,
+          username: username,
+          timestamp: Date.now(),
+          pfp: profilePictureUrl,
+        }),
+      );
+      setInput("");
+    }
+    else {
+      wsRef.current.send(
+        JSON.stringify({
+          action: "chat",
+          message: text,
+          username: db_username,
+          timestamp: Date.now(),
+          pfp: db_profilePictureUrl,
+        }),
+      );
+      setInput("");
+    }
   };
   
   const handleSetUsername = (name) => {
@@ -101,6 +140,14 @@ export function Chat({ wsRef, roomId, chatMessages, setChatMessages }: any) {
         {showSettings && (
           <div className="mt-2.5 rounded-md border border-zinc-800 bg-zinc-950 p-3 space-y-3">
             <div>
+              <label>
+                    <input 
+                      type="checkbox" 
+                      checked={useTemp} 
+                      onChange={(e) => setUseTemp(e.target.checked)} 
+                    />
+                    Use temp profile info? ({useTemp ? "ON" : "OFF"})
+                  </label>
               <label className="block text-xs font-medium text-zinc-400 mb-1">
                 Username
               </label>
@@ -201,7 +248,7 @@ export function Chat({ wsRef, roomId, chatMessages, setChatMessages }: any) {
           </button>
         </div>
         <p className="text-[11px] text-zinc-500">
-          Logged in as: <strong className="text-zinc-400 font-medium">{username}</strong>
+          Appearing as: <strong className="text-zinc-400 font-medium">{useTemp ? username : db_username}</strong>
         </p>
       </div>
     </div>
