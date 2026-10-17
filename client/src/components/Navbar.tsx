@@ -90,7 +90,7 @@ export default function NavbarDefault() {
   }, []);
 
   return (
-    <nav className="mx-auto max-w-screen-xl rounded-md border border-zinc-800 bg-zinc-900 px-4 py-2 lg:px-8 lg:py-4">
+    <nav className="mx-auto max-w-screen-xl rounded-md border border-zinc-800 bg-zinc-900 px-4 py-3 lg:px-8">
       <div className="mx-auto flex items-center justify-between text-zinc-100">
         <Link
           to="/"
