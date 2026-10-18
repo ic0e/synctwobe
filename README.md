@@ -4,7 +4,7 @@ Watch YouTube videos in sync with other people. Create a room, share the link, n
 
 
 ## Use it
-[https://syncyt.vercel.app/](https://syncyt.vercel.app/)
+[https://synctwobe.vercel.app/](https://synctwobe.vercel.app/)
 
 > *!! Early beta:* synctwobe is in early development, expect changes and unpolished features.
 
@@ -33,7 +33,7 @@ Messages go over the same WebSocket as playback events, so there is no separate 
 A room is just a URL. There is no signup, no login and no room setup.
 
 - *Creating:* Create a room with one click from the home page.
-- *Joining:* Enter the room ID on the home page, or open `https://syncyt.vercel.app/r/{ROOM_ID}`. You get the current video, position and chat history.
+- *Joining:* Enter the room ID on the home page, or open `https://synctwobe.vercel.app/r/{ROOM_ID}`. You get the current video, position and chat history.
 
 ### Accounts and Database
 
@@ -48,8 +48,8 @@ Supabase backs optional accounts. Room state, playback and chat messages do not 
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/ic0e/sync-yt
-cd sync-yt
+git clone https://github.com/ic0e/synctwobe
+cd synctwobe
 bun install
 bun run dev
 ```
