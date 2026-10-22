@@ -103,7 +103,7 @@ export default function NavbarDefault() {
           <NavList />
         </div>
 
-        {session ? (
+        {loading ? null : session ? (
           <div className="flex items-center gap-x-1">
             <Link
               to="/profile"
