@@ -11,6 +11,7 @@ export default function Profile() {
   const [savedAvatarUrl, setSavedAvatarUrl] = useState('')
   const [isEditingPfp, setIsEditingPfp] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [profileLoading, setProfileLoading] = useState(true)
 
   useEffect(() => {
     if (!session) return
@@ -28,6 +29,7 @@ export default function Profile() {
         setAvatarUrl(data.avatar_url || '');
         setSavedAvatarUrl(data.avatar_url || '');
       }
+      setProfileLoading(false);
     }
     
     fetchProfile()
@@ -58,6 +60,7 @@ export default function Profile() {
 
   if (loading) return null
   if (!session) return <Navigate to="/signin" replace />
+  if (profileLoading) return null
 
   const initial = session.user.email?.charAt(0).toUpperCase() || 'U'
 
